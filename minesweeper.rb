@@ -1,6 +1,7 @@
 require './tile.rb'
 require './board.rb'
 require 'byebug'
+require 'yaml'
 
 class MineSweeper
 
@@ -15,6 +16,11 @@ class MineSweeper
     loop do
       @board.draw_board
       move = get_move
+      if move == "s"
+        save_file
+        puts "File Saved! (I think)"
+        break
+      end
       coord = get_coordinate(move)
       @board.update(move, coord)
       break if @board.lost? || @board.won?
@@ -26,11 +32,18 @@ class MineSweeper
 
   end
 
+  def save_file
+    File.open("minesweeper_save.txt", 'w') do |f|
+      f.puts @board.to_yaml
+    end
+  end
+
   def get_move
     puts "Would you like to reveal or flag? (r/f)"
+    puts "You can also save the game with 's'."
     selection = gets.chomp.downcase
-    while selection != "r" && selection != "f"
-      puts "Invalid input, would you like to reveal or flag? (r/f)"
+    while selection != "r" && selection != "f" && selection != "s"
+      puts "Invalid input, would you like to reveal, flag or safe? (r/f/s)"
       selection = gets.chomp.downcase
     end
 
