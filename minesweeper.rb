@@ -14,6 +14,25 @@ class MineSweeper
 
   def play
 
+    loop do
+      move = get_move
+      coord = get_coordinate
+
+      if move == "r"
+        #fill in adjacent blanks, add them to @revealed_coords
+        @revealed_coords << coord
+      else
+        @flagged_coords << coord
+      end
+
+      #draw board
+
+      break if lost?
+
+    end
+
+    puts "You lost!"
+
   end
 
   def get_move
@@ -42,8 +61,8 @@ class MineSweeper
     @revealed_coords.sort == @board.safe_coords.sort
   end
 
-  def loss?
-    @board[@revealed_coords.last].is_mine?
+  def lost?
+    @board[*@revealed_coords.last].is_mine?
   end
 
 
