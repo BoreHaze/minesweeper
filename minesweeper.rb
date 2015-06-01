@@ -38,5 +38,13 @@ class MineSweeper
     coordinate
   end
 
+  def won?
+    @revealed_coords.sort == @board.safe_coords.sort
+  end
+
+  def loss?
+    @board[@revealed_coords.last].is_mine?
+  end
+
 
 end
