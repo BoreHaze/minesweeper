@@ -2,6 +2,16 @@ require './tile.rb'
 
 class Board
   BOARD_SIZE = 9
+  DELTAS = [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0, -1],
+    [ 0,  1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+  ]
 
   def initialize(number_of_mines)
     @number_of_mines = number_of_mines
@@ -24,6 +34,20 @@ class Board
       end
 
     end
+  end
+
+  def set_numbers
+
+  end
+
+  def count_adj_bombs(pos)
+
+
+  end
+
+  def in_bounds?(pos)
+    x, y = pos
+    x.between(0..8) && y.between(0..8)
   end
 
   def [](x, y)
