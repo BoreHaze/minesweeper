@@ -17,7 +17,7 @@ class Board
 
   def initialize(number_of_mines)
     @number_of_mines = number_of_mines
-    @rows = Array.new(BOARD_SIZE) {Array.new(BOARD_SIZE)}
+    @rows = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE) }
     @flagged_coords  = []
     @revealed_coords = []
   end
@@ -107,7 +107,7 @@ class Board
   end
 
   def won?
-    @revealed_coords.uniq.count == (BOARD_SIZE**2) - @number_of_mines
+    @revealed_coords.count == (BOARD_SIZE**2) - @number_of_mines
   end
 
   def lost?
@@ -135,16 +135,14 @@ class Board
 
   def explore_coords(coord)
     queue = [coord]
+    @revealed_coords << coord
     until queue.empty?
       next_coord = queue.shift
-      @revealed_coords << next_coord
-      #debugger
-      blank_neighbors = get_neighbors(next_coord)
-      blank_neighbors.each do |explore_coord|
+
+      get_neighbors(next_coord).each do |explore_coord|
+        @revealed_coords << explore_coord
         if self[*explore_coord].num_neighbors == 0
           queue << explore_coord
-        else
-          @revealed_coords << explore_coord
         end
       end
     end
