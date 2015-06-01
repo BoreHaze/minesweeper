@@ -8,7 +8,7 @@ class Tile
 
   def inspect
     return "*" if @mine
-    "-"
+    return @num_neighbors.to_s
   end
 
   def is_mine?

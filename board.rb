@@ -37,7 +37,14 @@ class Board
   end
 
   def set_numbers
-
+    @rows.each_with_index do |row, x_index|
+      row.each_with_index do |tile, y_index|
+        next unless tile.nil?
+        new_tile = Tile.new(false)
+        new_tile.num_neighbors = count_adj_bombs([x_index, y_index])
+        self[x_index, y_index] = new_tile
+      end
+    end
   end
 
   def count_adj_bombs(pos)
