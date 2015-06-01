@@ -1,7 +1,7 @@
 require './tile.rb'
+require './minesweeper.rb'
 
 class Board
-  BOARD_SIZE = 9
   DELTAS = [
     [-1, -1],
     [-1,  0],
@@ -15,28 +15,25 @@ class Board
 
   attr_reader :number_of_mines, :flagged_coords, :revealed_coords
 
-  def initialize(number_of_mines)
+  def initialize(board_size = 9, number_of_mines)
     @number_of_mines = number_of_mines
-    @rows = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE) }
+    @rows = Array.new(board_size) { Array.new(board_size) }
     @flagged_coords  = []
     @revealed_coords = []
+    @board_size = board_size
   end
 
+
+
   def set_mines
-    @number_of_mines.times do
-
-      placed_mine = false
-
-      until placed_mine
-        x = rand(BOARD_SIZE - 1)
-        y = rand(BOARD_SIZE - 1)
-
-        if self[x, y].nil?
-          self[x, y] = Tile.new(true)
-          placed_mine = true
-        end
+    mine_counter = 0
+    until mine_counter == number_of_mines
+      x = rand(@board_size - 1)
+      y = rand(@board_size - 1)
+      if self[x, y].nil?
+        self[x, y] = Tile.new(true)
+        mine_counter += 1
       end
-
     end
   end
 
@@ -65,7 +62,7 @@ class Board
   def in_bounds?(pos)
     x, y = pos
     return false if !x.is_a?(Fixnum) || !y.is_a?(Fixnum)
-    x.between?(0, BOARD_SIZE - 1) && y.between?(0, BOARD_SIZE - 1)
+    x.between?(0, @board_size - 1) && y.between?(0, @board_size - 1)
   end
 
   def [](x, y)
@@ -77,37 +74,47 @@ class Board
   end
 
   def draw_board
-    puts "   0 1 2 3 4 5 6 7 8" #should be parameterized
-    horizontal_line = " +-#{'-'*BOARD_SIZE*2}+"
-    0.upto(BOARD_SIZE - 1) do |row_idx|
-      puts horizontal_line
-      print "#{row_idx}| "
-      0.upto(BOARD_SIZE - 1) do |col_idx|
-
-        tile = self[row_idx, col_idx]
-
-        if @revealed_coords.include?([row_idx, col_idx])
-
-          if tile.is_mine?
-           print "* "
-          else
-           print "#{tile.num_neighbors} "
-          end
-
-        elsif @flagged_coords.include?([row_idx, col_idx])
-         print "F "
-        else
-         print "- "
-        end
-
-      end
-      puts "|"
+    print "  "
+    @board_size.times do |i|
+      print " #{i}"
     end
-    puts horizontal_line
+    puts ""
+
+    0.upto(@board_size - 1) do |row_idx|
+      render_rows(row_idx)
+    end
+    puts " +-#{'-'*@board_size*2}+"
+  end
+
+  def render_rows(row_idx)
+    puts " +-#{'-'*@board_size*2}+"
+    print "#{row_idx}| "
+    0.upto(@board_size - 1) do |col_idx|
+      render_tile(row_idx, col_idx)
+    end
+    puts "|"
+  end
+
+  def render_tile(row_idx, col_idx)
+    tile = self[row_idx, col_idx]
+
+    if @revealed_coords.include?([row_idx, col_idx])
+
+      if tile.is_mine?
+       print "* "
+      else
+       print "#{tile.num_neighbors} "
+      end
+
+    elsif @flagged_coords.include?([row_idx, col_idx])
+     print "F "
+    else
+     print "- "
+    end
   end
 
   def won?
-    @revealed_coords.count == (BOARD_SIZE**2) - @number_of_mines
+    @revealed_coords.count == (@board_size**2) - @number_of_mines
   end
 
   def lost?

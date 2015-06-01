@@ -6,23 +6,22 @@ require 'yaml'
 class MineSweeper
 
   def initialize(board_size=9, number_of_mines=12)
-    @board = Board.new(number_of_mines)
+    @board = Board.new(board_size, number_of_mines)
     @board.set_mines
     @board.set_numbers
   end
 
   def play
+    puts "Would you like to load a game? (y/n)"
+    load_option = gets.chomp.downcase
+    until load_option == "y" || load_option == "n"
+      puts "Invalid option, would you like to load a game? (y/n)"
+      load_option = gets.chomp.downcase
+    end
+
+    load_file if load_option == "y"
 
     loop do
-      puts "Would you like to load a game? (y/n)"
-      load_option = gets.chomp.downcase
-      until load_option == "y" || load_option == "n"
-        puts "Invalid option, would you like to load a game? (y/n)"
-        load_option = gets.chomp.downcase
-      end
-
-      load_file if load_option == "y"
-
       @board.draw_board
       move = get_move
       if move == "s"
