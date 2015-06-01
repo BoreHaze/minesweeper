@@ -20,9 +20,9 @@ class MineSweeper
       coord = get_coordinate(move)
 
       if move == "r"
-        #fill in adjacent blanks, add them to @revealed_coords
-        @revealed_coords << coord
+        reveal(coord)
       else
+        #toggle_flag(coord)
         @flagged_coords << coord
       end
 
@@ -77,5 +77,39 @@ class MineSweeper
     @board[*(@revealed_coords.last)].is_mine?
   end
 
+  def reveal(coord)
+    if @board[*coord].num_neighbors == 0
+      explore_coords(coord)
+    else
+      @revealed_coords << coord
+    end
+  end
+
+  def get_neighbors(coord)
+    result = []
+    Board::DELTAS.each do |d_x, d_y|
+      check_coord = [coord.first + d_x, coord.last + d_y]
+      next if @revealed_coords.include?(check_coord)
+      result << check_coord if @board.in_bounds?(check_coord)
+    end
+    result
+  end
+
+  def explore_coords(coord)
+    queue = [coord]
+    until queue.empty?
+      next_coord = queue.shift
+      @revealed_coords << next_coord
+      debugger
+      blank_neighbors = get_neighbors(next_coord)
+      blank_neighbors.each do |explore_coord|
+        if @board[*explore_coord].num_neighbors == 0
+          queue << explore_coord
+        else
+          @revealed_coords << explore_coord
+        end
+      end
+    end
+  end
 
 end
