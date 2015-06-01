@@ -1,5 +1,6 @@
 require './tile.rb'
 require './board.rb'
+require 'byebug'
 
 class MineSweeper
 
@@ -16,7 +17,7 @@ class MineSweeper
 
     loop do
       move = get_move
-      coord = get_coordinate
+      coord = get_coordinate(move)
 
       if move == "r"
         #fill in adjacent blanks, add them to @revealed_coords
@@ -46,13 +47,23 @@ class MineSweeper
     selection
   end
 
-  def get_coordinate
-    puts "Select a coordinate"
-    coordinate = gets.chomp.split(",").map(&:to_i)
-    until @board.in_bounds?(coordinate)
-      puts "Invalid coordinate, select another coordinate"
-      coordinate = gets.chomp.split(",").map(&:to_i)
-    end
+  def get_coordinate(move_type)
+      valid_move = false
+      until valid_move
+        valid_move = true
+        puts "Please choose a coordinate"
+        coordinate = gets.chomp.split(",").map(&:to_i)
+        #debugger
+        if move_type == "r"
+          valid_move = !@revealed_coords.include?(coordinate) &&
+            @board.in_bounds?(coordinate) &&
+            !@flagged_coords.include?(coordinate)
+        else
+          valid_move = !@revealed_coords.include?(coordinate) &&
+            @board.in_bounds?(coordinate)
+        end
+        puts "Not a valid coordinate, try again." unless valid_move
+      end
 
     coordinate
   end
@@ -62,7 +73,8 @@ class MineSweeper
   end
 
   def lost?
-    @board[*@revealed_coords.last].is_mine?
+    return false if @revealed_coords.empty?
+    @board[*(@revealed_coords.last)].is_mine?
   end
 
 
