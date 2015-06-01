@@ -13,9 +13,12 @@ class Board
     [ 1,  1]
   ]
 
+  attr_reader :safe_coords
+
   def initialize(number_of_mines)
     @number_of_mines = number_of_mines
     @rows = Array.new(BOARD_SIZE) {Array.new(BOARD_SIZE)}
+    @safe_coords = []
   end
 
   def set_mines
@@ -43,6 +46,7 @@ class Board
         new_tile = Tile.new(false)
         new_tile.num_neighbors = count_adj_bombs([x_index, y_index])
         self[x_index, y_index] = new_tile
+        safe_coords << [x_index, y_index]
       end
     end
   end
@@ -60,6 +64,7 @@ class Board
 
   def in_bounds?(pos)
     x, y = pos
+    return false if !x.is_a?(Fixnum) || !y.is_a?(Fixnum)
     x.between?(0, BOARD_SIZE - 1) && y.between?(0, BOARD_SIZE - 1)
   end
 
