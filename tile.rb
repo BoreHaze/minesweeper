@@ -1,5 +1,5 @@
 class Tile
-  
+
   attr_accessor :num_neighbors
 
   def initialize(mine) #mine is a boolean
@@ -9,6 +9,10 @@ class Tile
   def inspect
     return "*" if @mine
     "-"
+  end
+
+  def is_mine?
+    @mine
   end
 
 end
