@@ -16,9 +16,9 @@ class MineSweeper
   def play
 
     loop do
+      draw_board
       move = get_move
       coord = get_coordinate(move)
-
       if move == "r"
         reveal(coord)
       else
@@ -28,19 +28,17 @@ class MineSweeper
           @flagged_coords << coord
         end
       end
-
-      draw_board
-
-      break if lost?
+      break if lost? || won?
 
     end
-
-    puts "You lost!"
+    draw_board
+    puts "You lost!" if lost?
+    puts "You win!" if won?
 
   end
 
   def draw_board
-    puts "   0 1 2 3 4 5 6 7 8"
+    puts "   0 1 2 3 4 5 6 7 8" #should be parameterized
     horizontal_line = " +-#{'-'*Board::BOARD_SIZE*2}+"
     0.upto(Board::BOARD_SIZE - 1) do |row_idx|
       puts horizontal_line
@@ -102,7 +100,7 @@ class MineSweeper
   end
 
   def won?
-    @revealed_coords.sort == @board.safe_coords.sort
+    @revealed_coords.uniq.sort == @board.safe_coords.sort
   end
 
   def lost?
