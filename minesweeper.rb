@@ -22,11 +22,14 @@ class MineSweeper
       if move == "r"
         reveal(coord)
       else
-        #toggle_flag(coord)
-        @flagged_coords << coord
+        if @flagged_coords.include?(coord)
+          @flagged_coords.delete(coord)
+        else
+          @flagged_coords << coord
+        end
       end
 
-      #draw board
+      draw_board
 
       break if lost?
 
@@ -34,6 +37,36 @@ class MineSweeper
 
     puts "You lost!"
 
+  end
+
+  def draw_board
+    puts "   0 1 2 3 4 5 6 7 8"
+    horizontal_line = " +-#{'-'*Board::BOARD_SIZE*2}+"
+    0.upto(Board::BOARD_SIZE - 1) do |row_idx|
+      puts horizontal_line
+      print "#{row_idx}| "
+      0.upto(Board::BOARD_SIZE - 1) do |col_idx|
+
+        tile = @board[row_idx, col_idx]
+
+        if @revealed_coords.include?([row_idx, col_idx])
+
+          if tile.is_mine?
+           print "* "
+          else
+           print "#{tile.num_neighbors} "
+          end
+
+        elsif @flagged_coords.include?([row_idx, col_idx])
+         print "F "
+        else
+         print "- "
+        end
+
+      end
+      puts "|"
+    end
+    puts horizontal_line
   end
 
   def get_move
@@ -100,7 +133,7 @@ class MineSweeper
     until queue.empty?
       next_coord = queue.shift
       @revealed_coords << next_coord
-      debugger
+      #debugger
       blank_neighbors = get_neighbors(next_coord)
       blank_neighbors.each do |explore_coord|
         if @board[*explore_coord].num_neighbors == 0
