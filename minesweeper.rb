@@ -4,7 +4,7 @@ require 'byebug'
 
 class MineSweeper
 
-  def initialize(board_size=9, number_of_mines=15)
+  def initialize(board_size=9, number_of_mines=12)
     @board = Board.new(number_of_mines)
     @board.set_mines
     @board.set_numbers
@@ -100,7 +100,7 @@ class MineSweeper
   end
 
   def won?
-    @revealed_coords.uniq.sort == @board.safe_coords.sort
+    @revealed_coords.uniq.count == (Board::BOARD_SIZE**2) - @board.number_of_mines
   end
 
   def lost?
