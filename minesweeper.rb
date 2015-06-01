@@ -14,6 +14,15 @@ class MineSweeper
   def play
 
     loop do
+      puts "Would you like to load a game? (y/n)"
+      load_option = gets.chomp.downcase
+      until load_option == "y" || load_option == "n"
+        puts "Invalid option, would you like to load a game? (y/n)"
+        load_option = gets.chomp.downcase
+      end
+
+      load_file if load_option == "y"
+
       @board.draw_board
       move = get_move
       if move == "s"
@@ -30,6 +39,21 @@ class MineSweeper
     puts "You lost!" if @board.lost?
     puts "You win!" if @board.won?
 
+  end
+
+  def load_file
+    puts "What's the name of the save file?"
+
+    file_name = gets.chomp.downcase
+    until File.exist?(file_name)
+      puts "Invalid filename, try again or type 'c' to cancel load"
+      file_name = gets.chomp.downcase
+      return nil if file_name == "c"
+    end
+
+    input = YAML::load(File.read(file_name))
+    @board = input if input.is_a?(Board)
+    nil
   end
 
   def save_file
